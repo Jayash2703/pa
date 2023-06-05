@@ -1,0 +1,47 @@
+// Variable to store temperature
+float temp;
+// Variable to store pin at which temperature output is obtained
+int tempPin = 0;
+
+void setup()
+{
+  pinMode(12, OUTPUT);
+  pinMode(13,OUTPUT);
+ 
+  pinMode(11,OUTPUT);
+  // Used to establish serial communication with another device
+  // Param - BaudRate
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  // Reading analog value from pin A0
+  temp = analogRead(tempPin);
+  // Converting analog value(0-1023) to voltage value in V
+  temp = temp * (5.0/1024);
+  // Converting voltage value to centigrade temperature
+  // with 500mV offset
+  temp = (temp - 0.5) * 100;
+ 
+  // Printing value to the serial monitor
+  Serial.println(temp);
+ 
+  if(temp <50) {
+    digitalWrite(12, HIGH);
+    digitalWrite(13,LOW);
+    digitalWrite(11,LOW);
+   
+  }
+  else if(temp>50 && temp<100){
+  digitalWrite(13,HIGH);
+    digitalWrite(12,LOW);
+    digitalWrite(11,LOW);
+  }
+else  {
+  digitalWrite(11,HIGH);
+    digitalWrite(12, LOW);
+  digitalWrite(13,LOW);
+  }
+  delay(1000);
+}
