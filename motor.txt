@@ -1,0 +1,41 @@
+#include <pic18f4550.h>
+
+/* Calculations
+* Fosc = 48MHz
+*
+* PWM Period = [(PR2) + 1] * 4 * TMR2 Prescale Value / Fosc
+* PWM Period = 200us
+* TMR2 Prescale = 16
+* Hence, PR2 = 149 or 0x95
+*
+* Duty Cycle = 10% of 200us
+* Duty Cycle = 20us
+* Duty Cycle = (CCPR1L:CCP1CON<5:4>) * TMR2 Prescale Value / Fosc
+* CCP1CON<5:4> = <1:1>
+* Hence, CCPR1L = 15 or 0x0F
+*/
+
+void main(void)
+ {
+
+ TRISCbits.TRISC2 = 0; //DC Connection
+ CCP1CON = 0x1C; //Set CCp Module in PWM Mode
+ T2CON = 0x02; //Prescaler value=16 TMR2
+ TRISAbits.TRISA4 = 0;
+ INTCONbits.GIE=1; //Relay --> Just to visualize changes
+ while(1)
+ {
+ CCPR1L=15;
+ TMR2 = 0; //Use mandatorily because wecan't use PR2 without TMR2
+ PR2 = 250; //Max->255
+ PIR1bits.TMR2IF = 0; //Mandatory step...further procedure is carried out automatically
+ TMR2ON = 1; //Turn on TMR2
+ for(int i=250; i>0; i-=50) //Loop to change Duty Cycle(inversely related to speed)
+ {
+ CCPR1L = i; //PWN Duty Cycle-->This Changes the speed of DC Motor
+ for(int j=0; j<3000; j++) //Delay Generation
+ for(int k=0; k<1000; k++);
+ PORTAbits.RA4 ~= PORTAbits.RA4; //ToggleRelay
+ }
+ }
+ }

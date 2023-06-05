@@ -1,0 +1,32 @@
+#include<pic18f4550.h>
+#include<xc.h>
+
+void __interrupt()isr(){
+    if(INTCON3bits.INT1IF==1){
+        INTCONbits.GIE=0;
+        PORTAbits.RA4=1;
+        for(int i=0;i<100;i++){
+            for(int j=0;j<100;j++){
+
+            }
+        }
+        PORTAbits.RA4=0;
+        INTCON3bits.INT1IF=0;
+        INTCONbits.GIE=1;
+
+    }
+}
+
+void main(){
+            TRISB=0;
+            PORTB=0x55;
+            TRISBbits.RB1 = 1;
+            TRISAbits.TRISA4=0;
+            INTCONbits.GIE=1;
+            INTCON3bits.INT1IE=1;
+            INTCON3bits.INT1IF=0;
+            INTCON2bits.INTEDG1=0;  //falling edge
+            INTCONbits.PEIE=1;
+            while(1);
+            return;
+}

@@ -1,0 +1,46 @@
+#include<pic18f4550.h>
+#include<xc.h>
+
+int buz=0;
+int count=0;
+void __interrupt() isr(){
+    INTCONbits.GIE=0;
+    if(PIR1bits.TMR1IF==1){
+        if(buz && count==100){
+            buz=0;
+            PORTAbits.RA5=0;
+            count=0;
+        }
+        if(!buz && count==50){
+            buz=1;
+            PORTAbits.RA5=1;
+            count=0;
+        }
+        // you can repeat this 2 if loop for different count
+       count ++;
+       TMR1=28038;
+       PIR1bits.TMR1IF=0;
+       INTCONbits.GIE=1;
+    }
+}
+
+void main(){
+    T1CON=0xB0;
+    TRISA.TRISA5=0;
+    PORTAbits.RA5=0;
+    PIR1bits.TMR1IF=0;
+    PIE1bits.TMR1IE=1;
+    INTCONbits.GIE=1;
+    INTCONbits. PEIE=1;
+    T1CONbits.TMR1ON=1;
+    TRISB=0;
+    PORTB=0;
+    while(1){
+        for(inti=0;i<100;i++)
+            for(intj=0;j<100;j++);
+                PORTB++;      
+        
+    }
+  return;
+
+}
